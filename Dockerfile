@@ -10,6 +10,8 @@ RUN set -eux; \
         icu-dev \
         libsodium-dev \
         oniguruma-dev \
+        sqlite-dev \
+        libxml2-dev \
     ; \
     docker-php-ext-configure gd --with-freetype --with-jpeg; \
     docker-php-ext-install -j$(nproc) \
@@ -76,5 +78,10 @@ FROM base AS dev
 RUN apk add --no-cache git
 
 COPY --from=composer:2.9 /usr/bin/composer /usr/bin/composer
+COPY .docker/php/entrypoint.sh /usr/local/bin/docker-entrypoint
+RUN chmod +x /usr/local/bin/docker-entrypoint
+
+ENTRYPOINT ["docker-entrypoint"]
+CMD ["php-fpm"]
 
 HEALTHCHECK NONE

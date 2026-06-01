@@ -82,7 +82,7 @@ services:
       - ba-event
 
   mailpit:
-    image: axllent/mailpit:v1
+    image: axllent/mailpit:latest
     container_name: ba-event-mailpit
     restart: unless-stopped
     ports:
