@@ -26,7 +26,6 @@
             simplexml
             sodium
             tokenizer
-            xml
             xmlwriter
             zip
           ]);
