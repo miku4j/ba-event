@@ -1,0 +1,14 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "mcp": {
+        "laravel-boost": {
+            "type": "local",
+            "enabled": true,
+            "command": [
+                "/nix/store/b2kk92d6n5360ba1ra1p14672jx3lzbj-php-with-extensions-8.4.21/bin/php",
+                "/home/miku4j/repo/ba-event/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
