@@ -55,19 +55,9 @@ RUN composer install \
     --no-dev \
     --prefer-dist \
     && php artisan storage:link \
-    && php artisan view:cache \
     && php artisan route:cache
 
-FROM node:22-alpine AS node
-
-WORKDIR /build
-COPY package.json package-lock.json vite.config.js ./
-COPY resources/ resources/
-RUN npm ci && npm run build
-
 FROM prod AS app
-
-COPY --from=node /build/public/build public/build
 
 EXPOSE 9000
 
