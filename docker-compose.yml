@@ -115,6 +115,20 @@ services:
       - ./api:/var/www/html/api
     depends_on:
       - api-php
+      - web
+    networks:
+      - ba-event
+
+  web:
+    build: ./web
+    image: ba-event/web
+    container_name: ba-event-web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+    depends_on:
+      - api-php
     networks:
       - ba-event
 
