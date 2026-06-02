@@ -15,7 +15,7 @@ services:
       DB_PORT: "5432"
       DB_DATABASE: ba_event
       DB_USERNAME: ba_event
-      DB_PASSWORD: ba_event
+      DB_PASSWORD: ${DB_PASSWORD:-ba_event}
       REDIS_HOST: redis
       REDIS_PORT: "6379"
       SESSION_DRIVER: database
@@ -60,7 +60,7 @@ services:
     environment:
       POSTGRES_DB: ba_event
       POSTGRES_USER: ba_event
-      POSTGRES_PASSWORD: ba_event
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ba_event}
     volumes:
       - postgresql-data:/var/lib/postgresql/data
     healthcheck:
@@ -107,7 +107,7 @@ services:
       DB_PORT: "5432"
       DB_DATABASE: ba_event
       DB_USERNAME: ba_event
-      DB_PASSWORD: ba_event
+      DB_PASSWORD: ${DB_PASSWORD:-ba_event}
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
