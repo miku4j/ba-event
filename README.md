@@ -3,6 +3,13 @@
 Monorepo for a Blue Archive event planner. Contains a **Laravel API backend** (`api/`) and
 a **Next.js frontend** (`web/`) with shadcn/ui.
 
+## Requirements
+
+- **Docker** (v24+) & **Docker Compose** (v2.24+) — the only hard requirement.
+  Everything runs in containers; no local PHP/Node setup needed.
+- **Optional: Nix** (with flakes) — provides PHP 8.4, Composer 2.9, Node 22
+  for running one-off commands without Docker. See [Optional: Nix Shell](#optional-nix-shell).
+
 ## Quick Start
 
 ```bash
@@ -91,11 +98,32 @@ docker compose exec api-php php artisan test --compact --filter=SocialAuthTest
 
 ## Optional: Nix Shell
 
-If you have Nix installed, `nix develop` provides PHP 8.4, Composer, and Node 22
-for running one-off commands without Docker:
+[Nix](https://nixos.org/) is a cross-platform package manager that provides
+a reproducible development environment. When configured with
+[flakes](https://nixos.wiki/wiki/Flakes), a single `nix develop` gives you
+exactly the tool versions this project needs, regardless of what's installed
+system-wide:
+
+| Tool      | Version   |
+|-----------|-----------|
+| PHP       | 8.4       |
+| Composer  | 2.9       |
+| Node.js   | 22        |
+| pdo_pgsql | (included)|
+
+Using Nix is **optional** — all tools are already bundled in the Docker
+containers. It's only useful when you want to run a command outside of
+Docker (e.g. a quick `php artisan make:model` or `npm run lint`).
+
+### Installing Nix
 
 ```bash
-nix develop --command php artisan make:model Something
-nix develop --command npm run lint
-nix develop --command npm run build
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+```
+
+### Usage
+
+```bash
+nix develop                           # enter dev shell
+nix develop --command php artisan tinker   # run one command
 ```
