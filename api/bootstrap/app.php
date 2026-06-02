@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ApiTokenFromCookie;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->api(prepend: [
+            ApiTokenFromCookie::class,
+        ]);
+
         $middleware->redirectGuestsTo(fn (Request $request) => url('/api/login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {

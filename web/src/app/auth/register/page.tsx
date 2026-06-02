@@ -36,7 +36,6 @@ export default function RegisterPage() {
         throw new Error(data?.message || "Registration failed");
       }
 
-      localStorage.setItem("token", data.token);
       router.replace("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

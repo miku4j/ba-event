@@ -58,6 +58,6 @@ class SocialAuthController extends Controller
         return response()->json([
             'user' => $user,
             'token' => $token,
-        ]);
+        ])->cookie('auth_token', $token, 1440, '/', null, config('app.env') === 'production', true);
     }
 }

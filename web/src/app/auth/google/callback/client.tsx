@@ -21,8 +21,6 @@ export function GoogleCallbackClient({ code }: { code: string }) {
           throw new Error(data?.message || "Authentication failed");
         }
 
-        const data = await res.json();
-        localStorage.setItem("token", data.token);
         router.replace("/");
       } catch (err) {
         setError(err instanceof Error ? err.message : "Something went wrong");

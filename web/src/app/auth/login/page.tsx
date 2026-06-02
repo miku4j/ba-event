@@ -39,7 +39,6 @@ export default function LoginPage() {
         throw new Error(data?.message || "Login failed");
       }
 
-      localStorage.setItem("token", data.token);
       router.replace("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

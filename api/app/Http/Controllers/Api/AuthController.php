@@ -22,7 +22,7 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user,
             'token' => $token,
-        ], 201);
+        ], 201)->cookie('auth_token', $token, 1440, '/', null, config('app.env') === 'production', true);
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -40,14 +40,15 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user,
             'token' => $token,
-        ]);
+        ])->cookie('auth_token', $token, 1440, '/', null, config('app.env') === 'production', true);
     }
 
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Logged out successfully.']);
+        return response()->json(['message' => 'Logged out successfully.'])
+            ->cookie(cookie()->forget('auth_token', '/'));
     }
 
     public function user(Request $request): JsonResponse
