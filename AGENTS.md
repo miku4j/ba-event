@@ -155,3 +155,11 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Do NOT delete tests without approval.
 
 </laravel-boost-guidelines>
+
+### E2E Testing
+
+E2E tests live in `web/e2e/` and run via Playwright inside Docker.
+- **Run**: `docker compose -f docker-compose.yml -f docker-compose.e2e.yml run --rm e2e`
+- No host dependencies needed — Chromium is bundled in the `mcr.microsoft.com/playwright` image
+- `PLAYWRIGHT_BASE_URL` defaults to `http://localhost:8080` when running outside Docker
+- See `web/e2e/` for test files and `web/playwright.config.ts` for configuration

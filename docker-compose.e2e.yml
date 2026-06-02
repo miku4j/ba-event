@@ -1,0 +1,19 @@
+services:
+  e2e:
+    image: mcr.microsoft.com/playwright:v1.60.0-noble
+    container_name: ba-event-e2e
+    ipc: host
+    working_dir: /app
+    command:
+      - sh
+      - -c
+      - cd web && npm install --no-save @playwright/test && npx playwright test --config=playwright.config.ts
+    volumes:
+      - ./web:/app/web
+    environment:
+      PLAYWRIGHT_BASE_URL: http://api-nginx:80
+    depends_on:
+      api-nginx:
+        condition: service_started
+    networks:
+      - ba-event

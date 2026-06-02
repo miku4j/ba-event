@@ -101,11 +101,28 @@ Set these in `.env`:
 
 ## Testing
 
+### Backend (Pest)
+
 ```bash
 docker compose exec api-php php artisan test --compact
 docker compose exec api-php php artisan test --compact --filter=AuthTest
 docker compose exec api-php php artisan test --compact --filter=SocialAuthTest
 ```
+
+### E2E (Playwright)
+
+Runs inside a dedicated Docker container — no host dependencies beyond Docker itself.
+
+```bash
+# Start the stack (if not already running)
+docker compose up -d
+
+# Run E2E tests
+docker compose -f docker-compose.yml -f docker-compose.e2e.yml run --rm e2e
+```
+
+Tests run against the app at `http://localhost:8080` through the nginx proxy.
+Chromium and all system libraries are bundled in the `mcr.microsoft.com/playwright` image.
 
 ## Optional: Nix Shell
 
