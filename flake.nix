@@ -19,7 +19,9 @@
             intl
             mbstring
             pdo
+            pdo_pgsql
             pdo_sqlite
+            pgsql
             posix
             readline
             session
