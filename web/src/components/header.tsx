@@ -2,31 +2,20 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
 
 export function Header() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/user")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setUser(data))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: user, isLoading } = api.useQuery("GET", "/api/user");
+  const logout = api.useMutation("POST", "/api/logout", {
+    onSuccess: () => {
+      router.refresh();
+    },
+  });
 
   async function handleLogout() {
-    await fetch("/api/logout", { method: "POST" });
-    setUser(null);
+    await logout.mutateAsync({});
     router.replace("/");
   }
 
@@ -36,7 +25,7 @@ export function Header() {
         BA Event Planner
       </span>
       <nav className="flex items-center gap-3">
-        {loading ? null : user ? (
+        {isLoading ? null : user ? (
           <>
             <span className="text-sm text-zinc-500 dark:text-zinc-400">
               {user.name}

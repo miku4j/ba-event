@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { GuestOnly } from "@/components/guest-only";
+import { api } from "@/lib/api";
 import { FormEvent, useState } from "react";
 
 export default function RegisterPage() {
@@ -12,37 +13,28 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  const register = api.useMutation("POST", "/api/register", {
+    onSuccess: () => {
+      router.replace("/");
+    },
+    onError: () => {
+      setError("Registration failed");
+    },
+  });
 
   async function handleRegister(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
-    try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          password_confirmation: passwordConfirmation,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.message || "Registration failed");
-      }
-
-      router.replace("/");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    register.mutate({
+      body: {
+        name,
+        email,
+        password,
+        password_confirmation: passwordConfirmation,
+      },
+    });
   }
 
   return (
@@ -133,8 +125,8 @@ export default function RegisterPage() {
               <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
             )}
 
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Creating account..." : "Create account"}
+            <Button type="submit" disabled={register.isPending} className="w-full">
+              {register.isPending ? "Creating account..." : "Create account"}
             </Button>
           </form>
 

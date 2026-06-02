@@ -1,41 +1,30 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { api } from "@/lib/api";
 
 export function GoogleCallbackClient({ code }: { code: string }) {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+
+  const callback = api.useMutation("POST", "/api/auth/google/callback", {
+    onSuccess: () => {
+      router.replace("/");
+    },
+  });
 
   useEffect(() => {
-    async function handleCallback() {
-      try {
-        const res = await fetch("/api/auth/google/callback", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
-        });
-
-        if (!res.ok) {
-          const data = await res.json().catch(() => null);
-          throw new Error(data?.message || "Authentication failed");
-        }
-
-        router.replace("/");
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Something went wrong");
-      }
+    if (callback.isIdle) {
+      callback.mutate({ body: { code } });
     }
+  }, [code, callback]);
 
-    handleCallback();
-  }, [code, router]);
-
-  if (error) {
+  if (callback.isError) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-red-600">Login Failed</h1>
-          <p className="mt-2 text-zinc-600">{error}</p>
+          <p className="mt-2 text-zinc-600">Authentication failed</p>
         </div>
       </div>
     );

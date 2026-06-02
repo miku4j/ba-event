@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { GuestOnly } from "@/components/guest-only";
+import { api } from "@/lib/api";
 import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
@@ -10,13 +11,23 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  const googleUrl = api.useQuery("GET", "/api/auth/google/url");
+  const login = api.useMutation("POST", "/api/login", {
+    onSuccess: () => {
+      router.replace("/");
+    },
+    onError: () => {
+      setError("The provided credentials are incorrect.");
+    },
+  });
 
   async function handleGoogleLogin() {
     try {
-      const res = await fetch("/api/auth/google/url");
-      const data = await res.json();
-      window.location.href = data.url;
+      const { data } = await googleUrl.refetch();
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch {
       setError("Failed to initiate Google login");
     }
@@ -25,27 +36,10 @@ export default function LoginPage() {
   async function handleEmailLogin(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.message || "Login failed");
-      }
-
-      router.replace("/");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+    login.mutate({
+      body: { email, password },
+    });
   }
 
   return (
@@ -63,6 +57,7 @@ export default function LoginPage() {
             variant="outline"
             className="w-full"
             onClick={handleGoogleLogin}
+            disabled={googleUrl.isLoading}
           >
             <svg className="size-4" viewBox="0 0 24 24" aria-hidden="true">
               <path
@@ -135,8 +130,8 @@ export default function LoginPage() {
               <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
             )}
 
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Signing in..." : "Sign in with email"}
+            <Button type="submit" disabled={login.isPending} className="w-full">
+              {login.isPending ? "Signing in..." : "Sign in with email"}
             </Button>
           </form>
 
