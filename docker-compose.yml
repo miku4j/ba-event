@@ -13,8 +13,8 @@ services:
       DB_CONNECTION: pgsql
       DB_HOST: postgresql
       DB_PORT: "5432"
-      DB_DATABASE: ba_event
-      DB_USERNAME: ba_event
+      DB_DATABASE: ${DB_DATABASE:-ba_event}
+      DB_USERNAME: ${DB_USERNAME:-ba_event}
       DB_PASSWORD: ${DB_PASSWORD:-ba_event}
       REDIS_HOST: redis
       REDIS_PORT: "6379"
@@ -58,13 +58,13 @@ services:
     ports:
       - "${DB_PORT:-5432}:5432"
     environment:
-      POSTGRES_DB: ba_event
-      POSTGRES_USER: ba_event
+      POSTGRES_DB: ${DB_DATABASE:-ba_event}
+      POSTGRES_USER: ${DB_USERNAME:-ba_event}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-ba_event}
     volumes:
       - postgresql-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ba_event -d ba_event"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-ba_event} -d ${DB_DATABASE:-ba_event}"]
       interval: 3s
       retries: 10
     networks:
@@ -105,8 +105,8 @@ services:
       DB_CONNECTION: pgsql
       DB_HOST: postgresql
       DB_PORT: "5432"
-      DB_DATABASE: ba_event
-      DB_USERNAME: ba_event
+      DB_DATABASE: ${DB_DATABASE:-ba_event}
+      DB_USERNAME: ${DB_USERNAME:-ba_event}
       DB_PASSWORD: ${DB_PASSWORD:-ba_event}
       REDIS_HOST: redis
       REDIS_PORT: "6379"
