@@ -1,160 +1,51 @@
-# BA Event
+# BA Event – Full‑stack Blue Archive Event Planner
 
-Monorepo for a Blue Archive event planner. Contains a **Laravel API backend** (`api/`) and
-a **Next.js frontend** (`web/`) with shadcn/ui.
-
-## Table of Contents
-
-- [Requirements](#requirements)
-- [Quick Start](#quick-start)
-- [Production Build](#production-build)
-- [Structure](#structure)
-- [API](#api)
-- [Docker Services](#docker-services)
-- [Testing](#testing)
-- [Optional: Nix Shell](#optional-nix-shell)
-
-## Requirements
-
-- **Docker** (v24+) & **Docker Compose** (v2.24+) — the only hard requirement.
-  Everything runs in containers; no local PHP/Node setup needed.
-- **Optional: Nix** (with flakes) — provides PHP 8.4, Composer 2.9, Node 22
-  for running one-off commands without Docker. See [Optional: Nix Shell](#optional-nix-shell).
+Monorepo that provides a complete event‑planning tool for the game **Blue Archive**. It combines a **Laravel 13 API** (PHP 8.4) with a **Next.js** frontend built using **shadcn/ui** and TypeScript.
 
 ## Quick Start
-
 ```bash
 cp .env.example .env
 docker compose up --build
 ```
-
-Open http://localhost:8080 — nginx proxies `/api/*` to Laravel PHP-FPM and `/*` to the
-Next.js dev server with hot module replacement.
+The app is reachable at `http://localhost:8080` – Nginx proxies `/api/*` to Laravel and `/*` to the Next.js dev server.
 
 ## Production Build
-
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 ```
+Multi‑stage Docker images produce a minimal production container.
 
-## Structure
+## Key Features
+- **Secure auth** – Email/password & Google OAuth, cookies are HttpOnly (`auth_token`) and cleared server‑side on 401.
+- **Rate‑limited public endpoints** – Register (3 req/min) & login (5 req/min).
+- **Laravel 13 REST API** with Sanctum, Socialite, and auto‑generated OpenAPI spec.
+- **Next.js UI** using shadcn/ui components, TypeScript, and React‑Query (`useQuery`/`useMutation`).
+- **Docker‑first workflow** – PostgreSQL, Redis, Mailpit, PHP‑FPM, Nginx, and Next.js services.
+- **Optional Nix shell** – Reproducible dev environment (PHP 8.4, Composer 2.9, Node 22) without Docker.
+- **Full test suite** – Pest backend tests + Playwright end‑to‑end tests in Docker.
 
-```
-.
-├── api/              # Laravel 13 — REST API with Sanctum auth
-│   ├── app/          # Controllers, models, requests
-│   ├── config/       # Laravel config
-│   ├── routes/       # API routes
-│   ├── tests/        # Pest test suite
-│   └── Dockerfile    # PHP-FPM multi-stage Dockerfile
-├── web/              # Next.js — frontend with shadcn/ui
-│   ├── src/          # App router pages and components
-│   └── Dockerfile    # Next.js multi-stage Dockerfile
-├── docker-compose.yml
-├── docker-compose.prod.yml
-├── docker-compose.e2e.yml  # Playwright E2E tests (run via Docker)
-└── flake.nix               # Optional: provides PHP/Composer/Node for one-off commands
-```
-
-## API
-
-Token-based authentication via Laravel Sanctum. All API routes are prefixed with `/api`.
-
-The token is stored in an httpOnly `auth_token` cookie (set by the server on
-register/login/OAuth callback) and sent automatically by the browser on same-origin
-requests. No manual token handling is needed on the frontend.
-
-### Public Endpoints
-
-| Method | Path | Description | Rate Limit |
-|---|---|---|---|
-| POST | `/api/register` | Create account | 3/min |
-| POST | `/api/login` | Login via email + password | 5/min |
-| GET | `/api/auth/google/url` | Get Google OAuth redirect URL | — |
-| POST | `/api/auth/google/callback` | Exchange Google code for user + token | — |
-
-### Authenticated Endpoints (`auth:sanctum`)
-
-| Method | Path | Description |
-|---|---|---|
-| POST | `/api/logout` | Revoke current token |
-| GET | `/api/user` | Get authenticated user |
-
-### OAuth Setup
-
-Set these in `.env`:
-
-| Variable | Description |
-|---|---|
-| `GOOGLE_CLIENT_ID` | Google Cloud OAuth client ID |
-| `GOOGLE_CLIENT_SECRET` | Google Cloud OAuth client secret |
-| `GOOGLE_REDIRECT_URI` | Frontend callback URL |
-
-## Docker Services
-
-| Service | Role |
-|---|---|
-| `postgresql` | Database |
-| `redis` | Cache / queue backend |
-| `mailpit` | Dev email catcher (UI at port 8025) |
-| `api-php` | PHP-FPM serving Laravel |
-| `api-queue` | Queue worker |
-| `api-nginx` | Reverse proxy (port 8080) — `/api/*` → Laravel, `/*` → Next.js |
-| `web` | Next.js (HMR in dev, standalone in prod) |
+## Tech Stack
+| Layer | Technology |
+|-------|------------|
+| API | Laravel 13, Sanctum, Socialite |
+| Frontend | Next.js, TypeScript, shadcn/ui, TailwindCSS |
+| Auth | HttpOnly `auth_token` cookie, Google OAuth |
+| DevOps | Docker Compose, Nix, Pint (code formatting) |
+| Tests | Pest (PHP), Playwright (E2E) |
 
 ## Testing
-
-### Backend (Pest)
-
 ```bash
+# Backend tests
 docker compose exec api-php php artisan test --compact
-docker compose exec api-php php artisan test --compact --filter=AuthTest
-docker compose exec api-php php artisan test --compact --filter=SocialAuthTest
-```
 
-### E2E (Playwright)
-
-Runs inside a dedicated Docker container — no host dependencies beyond Docker itself.
-
-```bash
-# Start the stack (if not already running)
+# End‑to‑end tests
 docker compose up -d
-
-# Run E2E tests
 docker compose -f docker-compose.yml -f docker-compose.e2e.yml run --rm e2e
 ```
 
-Tests run against the app at `http://localhost:8080` through the nginx proxy.
-Chromium and all system libraries are bundled in the `mcr.microsoft.com/playwright` image.
-
-## Optional: Nix Shell
-
-[Nix](https://nixos.org/) is a cross-platform package manager that provides
-a reproducible development environment. When configured with
-[flakes](https://nixos.wiki/wiki/Flakes), a single `nix develop` gives you
-exactly the tool versions this project needs, regardless of what's installed
-system-wide:
-
-| Tool      | Version   |
-|-----------|-----------|
-| PHP       | 8.4       |
-| Composer  | 2.9       |
-| Node.js   | 22        |
-| pdo_pgsql | (included)|
-
-Using Nix is **optional** — all tools are already bundled in the Docker
-containers. It's only useful when you want to run a command outside of
-Docker (e.g. a quick `php artisan make:model` or `npm run lint`).
-
-### Installing Nix
-
+## Optional Nix Shell
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+nix develop
 ```
-
-### Usage
-
-```bash
-nix develop                           # enter dev shell
-nix develop --command php artisan tinker   # run one command
-```
+Provides PHP 8.4, Composer 2.9, and Node 22 without Docker.
