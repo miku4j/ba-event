@@ -1,0 +1,15 @@
+pre-commit:
+  parallel: true
+  commands:
+    pint:
+      glob: "*.php"
+      run: cd api && vendor/bin/pint --dirty {staged_files}
+    eslint:
+      glob: "*.{ts,tsx,js}"
+      run: cd web && npm run lint -- --no-warn-ignored {staged_files}
+    openapi-stale:
+      run: |
+        changed=$(git diff --cached --name-only -- api/app/Http api/routes)
+        [ -z "$changed" ] && exit 0
+        echo "⚠️  API routes/controllers changed — regenerate types:"
+        echo "   php artisan l5-swagger:generate && npm run types:api"
