@@ -52,14 +52,17 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 │   └── Dockerfile    # Next.js multi-stage Dockerfile
 ├── docker-compose.yml
 ├── docker-compose.prod.yml
-└── flake.nix         # Optional: provides PHP/Composer/Node for one-off commands
+├── docker-compose.e2e.yml  # Playwright E2E tests (run via Docker)
+└── flake.nix               # Optional: provides PHP/Composer/Node for one-off commands
 ```
 
 ## API
 
 Token-based authentication via Laravel Sanctum. All API routes are prefixed with `/api`.
 
-Pass the token as `Authorization: Bearer <token>`.
+The token is stored in an httpOnly `auth_token` cookie (set by the server on
+register/login/OAuth callback) and sent automatically by the browser on same-origin
+requests. No manual token handling is needed on the frontend.
 
 ### Public Endpoints
 
