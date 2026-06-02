@@ -25,7 +25,6 @@ services:
       MAIL_HOST: mailpit
       MAIL_PORT: "1025"
       MAIL_FROM_ADDRESS: "hello@ba-event.test"
-      VITE_DEV_SERVER_URL: "http://localhost:5173"
     volumes:
       - ./.docker/php/php.ini:/usr/local/etc/php/conf.d/ba-event.ini:ro
       - .:/var/www/html
@@ -118,20 +117,6 @@ services:
     depends_on:
       postgresql:
         condition: service_healthy
-    networks:
-      - ba-event
-
-  vite:
-    image: node:22-alpine
-    container_name: ba-event-vite
-    restart: unless-stopped
-    working_dir: /app
-    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
-    ports:
-      - "${VITE_PORT:-5173}:5173"
-    volumes:
-      - .:/app
-      - /app/node_modules
     networks:
       - ba-event
 
