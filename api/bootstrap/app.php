@@ -27,7 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->is('api/*')) {
-                return response()->json(['message' => 'Unauthenticated.'], 401);
+                return response()->json(['message' => 'Unauthenticated.'], 401)
+                    ->withoutCookie('auth_token', '/');
             }
         });
     })->create();
