@@ -120,12 +120,24 @@ services:
       - ba-event
 
   web:
-    build: ./web
+    build:
+      context: ./web
+      target: dev
     image: ba-event/web
     container_name: ba-event-web
     restart: unless-stopped
+    volumes:
+      - ./web/src:/app/src
+      - ./web/public:/app/public
+      - ./web/package.json:/app/package.json
+      - ./web/next.config.ts:/app/next.config.ts
+      - ./web/tsconfig.json:/app/tsconfig.json
+      - ./web/postcss.config.mjs:/app/postcss.config.mjs
+      - ./web/components.json:/app/components.json
+      - /app/node_modules
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
       NEXT_TELEMETRY_DISABLED: 1
     depends_on:
       - api-php
