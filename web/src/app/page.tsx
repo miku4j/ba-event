@@ -1,22 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { Header } from "@/components/header";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
-      <header className="flex items-center justify-between px-6 py-4">
-        <span className="text-lg font-semibold tracking-tight">
-          BA Event Planner
-        </span>
-        <nav className="flex items-center gap-3">
-          <Link href="/auth/login">
-            <Button variant="ghost">Sign in</Button>
-          </Link>
-          <Link href="/auth/register">
-            <Button>Get started</Button>
-          </Link>
-        </nav>
-      </header>
+      <Header />
 
       <main className="flex flex-1 flex-col items-center justify-center px-6 text-center">
         <h1 className="max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
