@@ -3,6 +3,17 @@
 Monorepo for a Blue Archive event planner. Contains a **Laravel API backend** (`api/`) and
 a **Next.js frontend** (`web/`) with shadcn/ui.
 
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+- [Production Build](#production-build)
+- [Structure](#structure)
+- [API](#api)
+- [Docker Services](#docker-services)
+- [Testing](#testing)
+- [Optional: Nix Shell](#optional-nix-shell)
+
 ## Requirements
 
 - **Docker** (v24+) & **Docker Compose** (v2.24+) — the only hard requirement.
