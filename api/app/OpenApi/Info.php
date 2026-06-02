@@ -13,6 +13,4 @@ use OpenApi\Attributes as OA;
     url: '{L5_SWAGGER_CONST_HOST}',
     description: 'API server',
 )]
-class Info
-{
-}
+class Info {}
