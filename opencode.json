@@ -6,7 +6,7 @@
             "enabled": true,
             "command": [
                 "php",
-                "/home/miku4j/repo/ba-event/api/artisan",
+                "api/artisan",
                 "boost:mcp"
             ]
         },
