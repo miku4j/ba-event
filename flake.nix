@@ -49,14 +49,9 @@
 
           shellHook = ''
             PATH="$PWD/api/vendor/bin:$PATH"
-            PATH="$PWD/api/node_modules/.bin:$PATH"
             PATH="$PWD/web/node_modules/.bin:$PATH"
             export PATH
-            echo "BA Event dev shell ready"
-            echo "  PHP:  $(php -v | head -n1)"
-            echo "  Composer: $(composer --version 2>/dev/null)"
-            echo "  Node: $(node --version)"
-            echo "  NPM:  $(npm --version)"
+            echo "Nix shell — PHP $(php -v | head -n1 | cut -d' ' -f2), Composer $(composer --version 2>/dev/null | cut -d' ' -f3), Node $(node --version)"
           '';
         };
       });

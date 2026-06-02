@@ -3,9 +3,20 @@
 Monorepo for a Blue Archive event planner. Contains a **Laravel API backend** (`api/`) and
 a **Next.js frontend** (`web/`) with shadcn/ui.
 
+## Quick Start
+
 ```bash
-docker compose up
-# → API + frontend served at http://localhost:8080
+cp .env.example .env
+docker compose up --build
+```
+
+Open http://localhost:8080 — nginx proxies `/api/*` to Laravel PHP-FPM and `/*` to the
+Next.js dev server with hot module replacement.
+
+## Production Build
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 ```
 
 ## Structure
@@ -17,37 +28,14 @@ docker compose up
 │   ├── config/       # Laravel config
 │   ├── routes/       # API routes
 │   ├── tests/        # Pest test suite
-│   └── Dockerfile    # PHP-FPM Docker image
+│   └── Dockerfile    # PHP-FPM multi-stage Dockerfile
 ├── web/              # Next.js — frontend with shadcn/ui
 │   ├── src/          # App router pages and components
-│   └── Dockerfile    # Next.js standalone Docker image
+│   └── Dockerfile    # Next.js multi-stage Dockerfile
 ├── docker-compose.yml
-├── dev.sh            # Nix + Docker local dev script
-└── flake.nix         # Optional Nix shell
+├── docker-compose.prod.yml
+└── flake.nix         # Optional: provides PHP/Composer/Node for one-off commands
 ```
-
-## Quick Start (Docker)
-
-```bash
-cp .env.example .env
-docker compose up
-```
-
-Open http://localhost:8080 — nginx proxies `/api/*` to Laravel and `/*` to the Next.js
-frontend. No separate ports needed.
-
-The entrypoint script auto-runs `composer install` and generates `APP_KEY` on first start.
-
-## Development (Nix + Docker)
-
-For contributors who prefer running dev servers directly:
-
-```bash
-./dev.sh
-```
-
-This starts PostgreSQL/Redis/Mailpit via Docker, installs deps, runs migrations, and
-prints instructions for starting both dev servers.
 
 ## API
 
@@ -91,24 +79,23 @@ Set these in `.env`:
 | `api-php` | PHP-FPM serving Laravel |
 | `api-queue` | Queue worker |
 | `api-nginx` | Reverse proxy (port 8080) — `/api/*` → Laravel, `/*` → Next.js |
-| `web` | Next.js standalone server (internal, port 3000) |
-
-## Development Commands
-
-```bash
-# API
-cd api && php artisan serve
-cd api && php artisan test --compact
-cd api && vendor/bin/pint --format agent
-
-# Frontend
-cd web && npm run dev
-```
+| `web` | Next.js (HMR in dev, standalone in prod) |
 
 ## Testing
 
 ```bash
-cd api && php artisan test --compact
-cd api && php artisan test --compact --filter=AuthTest
-cd api && php artisan test --compact --filter=SocialAuthTest
+docker compose exec api-php php artisan test --compact
+docker compose exec api-php php artisan test --compact --filter=AuthTest
+docker compose exec api-php php artisan test --compact --filter=SocialAuthTest
+```
+
+## Optional: Nix Shell
+
+If you have Nix installed, `nix develop` provides PHP 8.4, Composer, and Node 22
+for running one-off commands without Docker:
+
+```bash
+nix develop --command php artisan make:model Something
+nix develop --command npm run lint
+nix develop --command npm run build
 ```
