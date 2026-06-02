@@ -10,8 +10,8 @@ if [ ! -f .env ]; then
     php artisan key:generate
 fi
 
-if [ ! -f public/build/manifest.json ]; then
-    echo "No built assets found. Run 'npm run build' or start Vite with 'npm run dev'."
+if [ -f public/build/manifest.json ]; then
+    echo "Built assets found in api/public/build."
 fi
 
 exec "$@"

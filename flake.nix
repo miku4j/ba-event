@@ -1,5 +1,5 @@
 {
-  description = "Laravel 13 development environment";
+  description = "BA Event monorepo — Laravel API + Next.js frontend";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -48,10 +48,11 @@
           ];
 
           shellHook = ''
-            PATH="$PWD/vendor/bin:$PATH"
-            PATH="$PWD/node_modules/.bin:$PATH"
+            PATH="$PWD/api/vendor/bin:$PATH"
+            PATH="$PWD/api/node_modules/.bin:$PATH"
+            PATH="$PWD/web/node_modules/.bin:$PATH"
             export PATH
-            echo "Laravel dev shell ready"
+            echo "BA Event dev shell ready"
             echo "  PHP:  $(php -v | head -n1)"
             echo "  Composer: $(composer --version 2>/dev/null)"
             echo "  Node: $(node --version)"

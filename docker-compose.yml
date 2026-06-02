@@ -1,55 +1,4 @@
 services:
-  php:
-    build:
-      context: .
-      target: dev
-    image: ba-event/php
-    container_name: ba-event-php
-    restart: unless-stopped
-    working_dir: /var/www/html
-    environment:
-      APP_ENV: local
-      APP_DEBUG: "true"
-      DB_CONNECTION: pgsql
-      DB_HOST: postgresql
-      DB_PORT: "5432"
-      DB_DATABASE: ${DB_DATABASE:-ba_event}
-      DB_USERNAME: ${DB_USERNAME:-ba_event}
-      DB_PASSWORD: ${DB_PASSWORD:-ba_event}
-      REDIS_HOST: redis
-      REDIS_PORT: "6379"
-      SESSION_DRIVER: database
-      QUEUE_CONNECTION: database
-      CACHE_STORE: database
-      MAIL_MAILER: smtp
-      MAIL_HOST: mailpit
-      MAIL_PORT: "1025"
-      MAIL_FROM_ADDRESS: "hello@ba-event.test"
-    volumes:
-      - ./.docker/php/php.ini:/usr/local/etc/php/conf.d/ba-event.ini:ro
-      - .:/var/www/html
-      - /var/www/html/vendor
-      - /var/www/html/node_modules
-    depends_on:
-      postgresql:
-        condition: service_healthy
-    networks:
-      - ba-event
-
-  nginx:
-    image: nginx:alpine
-    container_name: ba-event-nginx
-    restart: unless-stopped
-    ports:
-      - "${APP_PORT:-8080}:80"
-    volumes:
-      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - .:/var/www/html
-    depends_on:
-      - php
-    networks:
-      - ba-event
-
   postgresql:
     image: postgres:17-alpine
     container_name: ba-event-postgresql
@@ -89,14 +38,50 @@ services:
     networks:
       - ba-event
 
-  queue:
+  api-php:
     build:
-      context: .
+      context: ./api
       target: dev
-    image: ba-event/php
-    container_name: ba-event-queue
+    image: ba-event/api-php
+    container_name: ba-event-api-php
     restart: unless-stopped
-    working_dir: /var/www/html
+    working_dir: /var/www/html/api
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      DB_CONNECTION: pgsql
+      DB_HOST: postgresql
+      DB_PORT: "5432"
+      DB_DATABASE: ${DB_DATABASE:-ba_event}
+      DB_USERNAME: ${DB_USERNAME:-ba_event}
+      DB_PASSWORD: ${DB_PASSWORD:-ba_event}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      SESSION_DRIVER: database
+      QUEUE_CONNECTION: database
+      CACHE_STORE: database
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: "1025"
+      MAIL_FROM_ADDRESS: "hello@ba-event.test"
+    volumes:
+      - ./api/.docker/php/php.ini:/usr/local/etc/php/conf.d/ba-event.ini:ro
+      - ./api:/var/www/html/api
+      - /var/www/html/api/vendor
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    networks:
+      - ba-event
+
+  api-queue:
+    build:
+      context: ./api
+      target: dev
+    image: ba-event/api-php
+    container_name: ba-event-api-queue
+    restart: unless-stopped
+    working_dir: /var/www/html/api
     command: php artisan queue:listen
     environment:
       APP_ENV: local
@@ -110,13 +95,26 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: "6379"
     volumes:
-      - ./.docker/php/php.ini:/usr/local/etc/php/conf.d/ba-event.ini:ro
-      - .:/var/www/html
-      - /var/www/html/vendor
-      - /var/www/html/node_modules
+      - ./api/.docker/php/php.ini:/usr/local/etc/php/conf.d/ba-event.ini:ro
+      - ./api:/var/www/html/api
+      - /var/www/html/api/vendor
     depends_on:
       postgresql:
         condition: service_healthy
+    networks:
+      - ba-event
+
+  api-nginx:
+    image: nginx:alpine
+    container_name: ba-event-api-nginx
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:80"
+    volumes:
+      - ./api/.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./api:/var/www/html/api
+    depends_on:
+      - api-php
     networks:
       - ba-event
 
