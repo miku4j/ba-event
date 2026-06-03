@@ -10,9 +10,40 @@ use Illuminate\Support\Facades\Hash;
 
 class EventSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
+    private const LOCATIONS = [
+        'trinity' => 'Trinity General School',
+        'gehenna' => 'Gehenna Academy',
+        'millennium' => 'Millennium Science School',
+        'abydos' => 'Abydos High School',
+        'hyakkiyako' => 'Hyakkiyako Alliance Academy',
+        'shanhaijing' => 'Shanhaijing Senior Secondary School',
+        'red' => 'Red Winter Federal Academy',
+        'valkyrie' => 'Valkyrie Police School',
+        'srt' => 'SRT Special Academy',
+        'sister' => 'Trinity General School',
+        'hina' => 'Gehenna Academy',
+        'wakamo' => 'Hyakkiyako Alliance Academy',
+        'ninja' => 'Hyakkiyako Alliance Academy',
+        'opera' => 'Gehenna Academy',
+        'bunny' => 'Millennium Science School',
+        'game' => 'Millennium Science School',
+        'cafe' => 'Millennium Science School',
+        'mille' => 'Millennium Science School',
+        'halo' => 'Millennium Science School',
+        'sweets' => 'Trinity General School',
+        'christmas' => 'Trinity General School',
+        'steel' => 'Kivotos',
+        'miku' => 'Kivotos',
+        'schale' => 'Schale Residence',
+        'handyman' => 'Gehenna Academy',
+        'hot_spring' => 'Gehenna Academy',
+        'neverland' => 'Kivotos',
+        'cherry' => 'Hyakkiyako Alliance Academy',
+        'ivan' => 'Red Winter Federal Academy',
+        'summer_sky' => 'Kivotos',
+        'default' => 'Kivotos Central District',
+    ];
+
     public function run(): void
     {
         $students = [
@@ -90,95 +121,27 @@ class EventSeeder extends Seeder
             $userIds[] = $user->id;
         }
 
-        $events = [
-            [
-                'title' => 'After-School Sweets Club Live - Re:Aho',
-                'description' => 'A special live performance by the After-School Sweets Club! Come and enjoy our new songs and delicious sweets.',
-                'location' => 'Trinity General School - Auditorium',
-                'starts_at' => now()->addDays(7)->setTime(18, 0),
-                'capacity' => 50,
-            ],
-            [
-                'title' => 'Abydos Desert Cleanup Drive',
-                'description' => 'Join the Foreclosure Task Force in preserving the beauty of Abydos. Please bring your own gear.',
-                'location' => 'Abydos District - Sector 04',
-                'starts_at' => now()->addDays(2)->setTime(9, 0),
-                'capacity' => 20,
-            ],
-            [
-                'title' => 'Millennium Science School Game Jam',
-                'description' => '48 hours of non-stop game development. Hosted by the Game Development Department.',
-                'location' => 'Millennium Science School - Engineering Club Lab',
-                'starts_at' => now()->addDays(14)->setTime(10, 0),
-                'capacity' => 100,
-            ],
-            [
-                'title' => 'Gehenna Gourmet Research Society Tour',
-                'description' => 'A culinary journey through Kivotos. Warning: May involve explosions.',
-                'location' => 'Kivotos Central District - Restaurant Alley',
-                'starts_at' => now()->addDays(5)->setTime(12, 0),
-                'capacity' => 15,
-            ],
-            [
-                'title' => 'Prefect Team Discipline Workshop',
-                'description' => 'Learn about school regulations and maintenance of order with Head Prefect Hina.',
-                'location' => 'Gehenna Academy - Main Hall',
-                'starts_at' => now()->addDays(3)->setTime(15, 0),
-                'capacity' => 40,
-            ],
-            [
-                'title' => 'Seminar Budgeting Seminar',
-                'description' => 'Yuuka explains the importance of financial discipline and receipt management.',
-                'location' => 'Millennium Science School - Seminar Room 101',
-                'starts_at' => now()->addDays(1)->setTime(14, 0),
-                'capacity' => 30,
-            ],
-            [
-                'title' => 'Veritas Hacking Convention',
-                'description' => 'Technical talks and CTF challenges. No unauthorized access allowed.',
-                'location' => 'Millennium Science School - IT Building',
-                'starts_at' => now()->addDays(10)->setTime(20, 0),
-                'capacity' => 60,
-            ],
-            [
-                'title' => 'C&C Maid Training Program',
-                'description' => 'Service with a smile... and tactical precision. Cleaning and combat training.',
-                'location' => 'Millennium Science School - Secret HQ',
-                'starts_at' => now()->addDays(8)->setTime(13, 0),
-                'capacity' => 10,
-            ],
-            [
-                'title' => 'Sisterhood Charity Tea Party',
-                'description' => 'A calm afternoon with tea and prayers. Proceeds go to Trinity local orphanage.',
-                'location' => 'Trinity General School - Cathedral Garden',
-                'starts_at' => now()->addDays(6)->setTime(16, 0),
-                'capacity' => 80,
-            ],
-            [
-                'title' => 'Red Winter Labor Festival',
-                'description' => 'Celebrate the glorious labor! Free pudding for every participant (while stocks last).',
-                'location' => 'Red Winter Federal Academy - Red Square',
-                'starts_at' => now()->addDays(12)->setTime(8, 0),
-                'capacity' => 200,
-            ],
-            [
-                'title' => 'Hyakkiyako Summer Festival',
-                'description' => 'Fireworks, traditional snacks, and street performances.',
-                'location' => 'Hyakkiyako Academy - Traditional Street',
-                'starts_at' => now()->addDays(20)->setTime(19, 0),
-                'capacity' => 150,
-            ],
-            [
-                'title' => 'Schale Training Session',
-                'description' => 'Standard combat training for students from all schools. Supervised by Sensei.',
-                'location' => 'Schale Residence - Combat Simulation Room',
-                'starts_at' => now()->addDays(4)->setTime(10, 0),
-                'capacity' => 25,
-            ],
-        ];
+        $eventsJson = json_decode(
+            file_get_contents(database_path('seeders/data/ba_events.json')),
+            true,
+            flags: JSON_THROW_ON_ERROR
+        );
 
-        foreach ($events as $eventData) {
-            $event = Event::create($eventData);
+        $dateCursor = now()->addDay();
+        foreach ($eventsJson as $eventData) {
+            $title = trim(explode("\n", $eventData['title'])[0]);
+
+            $location = $this->resolveLocation($title);
+
+            $event = Event::create([
+                'title' => $title,
+                'description' => "Blue Archive event: {$title}",
+                'location' => $location,
+                'image_url' => $eventData['banner_url'],
+                'wiki_url' => $eventData['wiki_url'],
+                'starts_at' => $dateCursor,
+                'capacity' => rand(30, 300),
+            ]);
 
             $attendeeCount = min(
                 rand(5, min($event->capacity, count($userIds))),
@@ -198,6 +161,41 @@ class EventSeeder extends Seeder
                     'status' => 'attending',
                 ]);
             }
+
+            $dateCursor = $dateCursor->addDays(rand(3, 7));
         }
+    }
+
+    private function resolveLocation(string $title): string
+    {
+        $lower = mb_strtolower($title);
+
+        $patterns = [
+            '/trinity/i' => 'trinity',
+            '/gehenna/i' => 'gehenna',
+            '/millennium/i' => 'millennium',
+            '/mille/i' => 'mille',
+            '/abydos/i' => 'abydos',
+            '/hyakkiyako|wakamo|ninja|shinobu|cherry\s.*blossom|neverland/i' => 'hyakkiyako',
+            '/shanhaijing|ryubu|doushu/i' => 'shanhaijing',
+            '/red\s?winter|ivan/i' => 'red',
+            '/valkyrie|kanna/i' => 'valkyrie',
+            '/srt|rabbit/i' => 'srt',
+            '/sister|christmas|cathedral|sweets/i' => 'trinity',
+            '/hina|prefect|opera|handyman|hot.?spring|food|winter.?sky/i' => 'gehenna',
+            '/bunny|game|cafe|halo|box/i' => 'millennium',
+            '/summer_?sky|summer.?sky/i' => 'summer_sky',
+            '/schale/i' => 'schale',
+            '/steel/i' => 'steel',
+            '/miku/i' => 'miku',
+        ];
+
+        foreach ($patterns as $regex => $key) {
+            if (preg_match($regex, $lower)) {
+                return self::LOCATIONS[$key];
+            }
+        }
+
+        return self::LOCATIONS['default'];
     }
 }

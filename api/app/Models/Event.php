@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['title', 'description', 'location', 'image_url', 'starts_at', 'capacity'])]
+#[Fillable(['title', 'description', 'location', 'image_url', 'wiki_url', 'starts_at', 'capacity'])]
 class Event extends Model
 {
     /** @use HasFactory<EventFactory> */
