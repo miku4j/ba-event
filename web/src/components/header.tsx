@@ -1,27 +1,23 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
+import { queryClient } from "@/lib/query-client";
 import Link from "next/link";
 import { useState } from "react";
 import { CircleDot, Menu, X } from "lucide-react";
 
 export function Header() {
-  const router = useRouter();
   const pathname = usePathname();
   const { data: user, isLoading } = api.useQuery("GET", "/api/user");
-  const logout = api.useMutation("POST", "/api/logout", {
-    onSuccess: () => {
-      router.refresh();
-    },
-  });
+  const logout = api.useMutation("POST", "/api/logout");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   async function handleLogout() {
     await logout.mutateAsync({});
+    queryClient.clear();
     setMobileOpen(false);
-    router.replace("/");
   }
 
   function navLink(href: string, label: string) {
