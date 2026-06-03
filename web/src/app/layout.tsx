@@ -30,6 +30,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add(localStorage.getItem('theme')||'dark');`,
+          }}
+        />
         <Providers>{children}</Providers>
       </body>
     </html>
