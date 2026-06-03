@@ -9,6 +9,7 @@ interface Event {
   title: string;
   description: string;
   location: string;
+  image_url?: string;
   starts_at: string;
   capacity: number;
   rsvps_count: number;

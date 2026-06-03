@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Header } from "@/components/header";
 import { EventCard } from "@/components/events/event-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, MapPin, Users, Music, Sparkles } from "lucide-react";
+import { CalendarDays, MapPin, Users, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 interface Event {
@@ -13,6 +14,7 @@ interface Event {
   title: string;
   description: string;
   location: string;
+  image_url?: string;
   starts_at: string;
   capacity: number;
   rsvps_count: number;
@@ -22,6 +24,7 @@ export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
   const [user, setUser] = useState<{ id: number; name: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [featuredImgError, setFeaturedImgError] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -98,12 +101,6 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Music className="h-5 w-5 text-sky-500" />
-                      <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
-                        After-School Sweets Club
-                      </span>
-                    </div>
                     <div className="mt-8 flex items-center gap-4">
                       <Link href={user ? "#" : "/auth/login"}>
                         <Button
@@ -113,23 +110,31 @@ export default function Home() {
                             featured.rsvps_count >= featured.capacity
                           }
                         >
-                          {user
-                            ? "RSVP for Sweets Club"
-                            : "Sign in to RSVP"}
+                          {user ? "RSVP" : "Sign in to RSVP"}
                         </Button>
                       </Link>
                     </div>
                   </div>
-                  <div className="md:col-span-2 hidden md:flex items-center justify-center bg-gradient-to-br from-sky-100 to-indigo-100 dark:from-sky-900/30 dark:to-indigo-900/30 p-8">
-                    <div className="text-center">
-                      <div className="text-7xl mb-4">🎵</div>
-                      <p className="text-sky-600 dark:text-sky-400 font-medium text-xl">
-                        Sweets Club
-                      </p>
-                      <p className="text-zinc-500 dark:text-zinc-400 text-sm">
-                        Live Performance
-                      </p>
-                    </div>
+                  <div className="md:col-span-2 hidden md:flex items-center justify-center bg-gradient-to-br from-sky-100 to-indigo-100 dark:from-sky-900/30 dark:to-indigo-900/30 p-0 overflow-hidden">
+                    {featured.image_url && !featuredImgError ? (
+                      <div className="relative w-full h-full min-h-64">
+                        <Image
+                          src={featured.image_url}
+                          alt={featured.title}
+                          fill
+                          className="object-cover"
+                          onError={() => setFeaturedImgError(true)}
+                          unoptimized
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-center p-8">
+                        <div className="text-7xl mb-4">🎉</div>
+                        <p className="text-sky-600 dark:text-sky-400 font-medium text-xl">
+                          {featured.location}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

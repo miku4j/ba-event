@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +12,7 @@ interface Event {
   title: string;
   description: string;
   location: string;
+  image_url?: string;
   starts_at: string;
   capacity: number;
   rsvps_count: number;
@@ -21,6 +26,7 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, onRSVP, isRSVPed, isLoading }: EventCardProps) {
+  const [imgError, setImgError] = useState(false);
   const isFull = event.rsvps_count >= event.capacity;
   const startDate = new Date(event.starts_at).toLocaleDateString(undefined, {
     weekday: 'short',
@@ -32,6 +38,20 @@ export function EventCard({ event, onRSVP, isRSVPed, isLoading }: EventCardProps
 
   return (
     <Card className="overflow-hidden border-zinc-200 dark:border-zinc-800">
+      {event.image_url && !imgError ? (
+        <div className="relative aspect-video overflow-hidden">
+          <Image
+            src={event.image_url}
+            alt={event.title}
+            fill
+            className="object-cover"
+            onError={() => setImgError(true)}
+            unoptimized
+          />
+        </div>
+      ) : (
+        <div className="aspect-video bg-gradient-to-br from-sky-100 to-indigo-100 dark:from-sky-950/30 dark:to-indigo-950/30" />
+      )}
       <CardHeader className="bg-zinc-50 dark:bg-zinc-900/50">
         <div className="flex items-start justify-between">
           <CardTitle className="text-xl font-bold text-sky-600 dark:text-sky-400">
@@ -59,8 +79,8 @@ export function EventCard({ event, onRSVP, isRSVPed, isLoading }: EventCardProps
         </div>
       </CardContent>
       <CardFooter>
-        <Button 
-          className="w-full" 
+        <Button
+          className="w-full"
           variant={isRSVPed ? "outline" : "default"}
           disabled={isFull && !isRSVPed || isLoading}
           onClick={() => onRSVP?.(event.id)}
