@@ -68,7 +68,7 @@ export default function Home() {
                         Featured Event
                       </Badge>
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-sky-600 dark:text-sky-400 mb-4">
+                    <h2 className="text-2xl md:text-3xl font-bold text-sky-600 dark:text-sky-400 mb-4 line-clamp-2">
                       {featured.title}
                     </h2>
                     <p className="text-zinc-600 dark:text-zinc-400 mb-6 line-clamp-3">

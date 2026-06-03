@@ -54,7 +54,7 @@ export function EventCard({ event, onRSVP, isRSVPed, isLoading }: EventCardProps
       )}
       <CardHeader className="bg-zinc-50 dark:bg-zinc-900/50">
         <div className="flex items-start justify-between">
-          <CardTitle className="text-xl font-bold text-sky-600 dark:text-sky-400">
+          <CardTitle className="text-xl font-bold text-sky-600 dark:text-sky-400 line-clamp-2">
             {event.title}
           </CardTitle>
           {isFull && <Badge variant="destructive">FULL</Badge>}
