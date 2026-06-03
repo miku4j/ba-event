@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Event;
+use App\Models\Rsvp;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -15,28 +16,78 @@ class EventSeeder extends Seeder
     public function run(): void
     {
         $students = [
+            // Trinity General School (14)
             ['name' => 'Kazusa', 'email' => 'kazusa@trinity.edu.ks'],
             ['name' => 'Airi', 'email' => 'airi@trinity.edu.ks'],
             ['name' => 'Natsu', 'email' => 'natsu@trinity.edu.ks'],
             ['name' => 'Yoshimi', 'email' => 'yoshimi@trinity.edu.ks'],
-            ['name' => 'Shiroko', 'email' => 'shiroko@abydos.edu.ks'],
-            ['name' => 'Hoshino', 'email' => 'hoshino@abydos.edu.ks'],
+            ['name' => 'Mika', 'email' => 'mika@trinity.edu.ks'],
+            ['name' => 'Nagisa', 'email' => 'nagisa@trinity.edu.ks'],
+            ['name' => 'Mashiro', 'email' => 'mashiro@trinity.edu.ks'],
+            ['name' => 'Hasumi', 'email' => 'hasumi@trinity.edu.ks'],
+            ['name' => 'Ui', 'email' => 'ui@trinity.edu.ks'],
+            ['name' => 'Koharu', 'email' => 'koharu@trinity.edu.ks'],
+            ['name' => 'Azusa', 'email' => 'azusa@trinity.edu.ks'],
+            ['name' => 'Saori', 'email' => 'saori@trinity.edu.ks'],
+            ['name' => 'Hifumi', 'email' => 'hifumi@trinity.edu.ks'],
+            ['name' => 'Tsurugi', 'email' => 'tsurugi@trinity.edu.ks'],
+            // Millennium Science School (12)
             ['name' => 'Yuuka', 'email' => 'yuuka@millennium.edu.ks'],
             ['name' => 'Noa', 'email' => 'noa@millennium.edu.ks'],
+            ['name' => 'Aris', 'email' => 'aris@millennium.edu.ks'],
+            ['name' => 'Midori', 'email' => 'midori@millennium.edu.ks'],
+            ['name' => 'Momoi', 'email' => 'momoi@millennium.edu.ks'],
+            ['name' => 'Hibiki', 'email' => 'hibiki@millennium.edu.ks'],
+            ['name' => 'Kotama', 'email' => 'kotama@millennium.edu.ks'],
+            ['name' => 'Eimi', 'email' => 'eimi@millennium.edu.ks'],
+            ['name' => 'Akane', 'email' => 'akane@millennium.edu.ks'],
+            ['name' => 'Karin', 'email' => 'karin@millennium.edu.ks'],
+            ['name' => 'Asuna', 'email' => 'asuna@millennium.edu.ks'],
+            ['name' => 'Neru', 'email' => 'neru@millennium.edu.ks'],
+            // Gehenna Academy (7)
             ['name' => 'Hina', 'email' => 'hina@gehenna.edu.ks'],
             ['name' => 'Ako', 'email' => 'ako@gehenna.edu.ks'],
-            ['name' => 'Aris', 'email' => 'aris@millennium.edu.ks'],
-            ['name' => 'Mika', 'email' => 'mika@trinity.edu.ks'],
+            ['name' => 'Iori', 'email' => 'iori@gehenna.edu.ks'],
+            ['name' => 'Aru', 'email' => 'aru@gehenna.edu.ks'],
+            ['name' => 'Mutsuki', 'email' => 'mutsuki@gehenna.edu.ks'],
+            ['name' => 'Kayoko', 'email' => 'kayoko@gehenna.edu.ks'],
+            ['name' => 'Haruka', 'email' => 'haruka@gehenna.edu.ks'],
+            // Abydos High School (5)
+            ['name' => 'Shiroko', 'email' => 'shiroko@abydos.edu.ks'],
+            ['name' => 'Hoshino', 'email' => 'hoshino@abydos.edu.ks'],
+            ['name' => 'Serika', 'email' => 'serika@abydos.edu.ks'],
+            ['name' => 'Nonomi', 'email' => 'nonomi@abydos.edu.ks'],
+            ['name' => 'Ayane', 'email' => 'ayane@abydos.edu.ks'],
+            // Hyakkiyako (3)
+            ['name' => 'Wakamo', 'email' => 'wakamo@hyakkiyako.edu.ks'],
+            ['name' => 'Shizuko', 'email' => 'shizuko@hyakkiyako.edu.ks'],
+            ['name' => 'Izuna', 'email' => 'izuna@hyakkiyako.edu.ks'],
+            // Shanhaijing (3)
+            ['name' => 'Shun', 'email' => 'shun@shanhaijing.edu.ks'],
+            ['name' => 'Saya', 'email' => 'saya@shanhaijing.edu.ks'],
+            ['name' => 'Kisaki', 'email' => 'kisaki@shanhaijing.edu.ks'],
+            // Red Winter (2)
+            ['name' => 'Cherino', 'email' => 'cherino@redwinter.edu.ks'],
+            ['name' => 'Minori', 'email' => 'minori@redwinter.edu.ks'],
+            // Valkyrie (2)
+            ['name' => 'Kanna', 'email' => 'kanna@valkyrie.edu.ks'],
+            ['name' => 'Kirino', 'email' => 'kirino@valkyrie.edu.ks'],
+            // SRT (3)
+            ['name' => 'Miyu', 'email' => 'miyu@srt.edu.ks'],
+            ['name' => 'Saki', 'email' => 'saki@srt.edu.ks'],
+            ['name' => 'Mari', 'email' => 'mari@srt.edu.ks'],
         ];
 
+        $userIds = [];
         foreach ($students as $student) {
-            User::updateOrCreate(
+            $user = User::updateOrCreate(
                 ['email' => $student['email']],
                 [
                     'name' => $student['name'],
                     'password' => Hash::make('password'),
                 ]
             );
+            $userIds[] = $user->id;
         }
 
         $events = [
@@ -118,7 +169,7 @@ class EventSeeder extends Seeder
                 'capacity' => 150,
             ],
             [
-                'title' => 'Shale Schale Training Session',
+                'title' => 'Schale Training Session',
                 'description' => 'Standard combat training for students from all schools. Supervised by Sensei.',
                 'location' => 'Schale Residence - Combat Simulation Room',
                 'starts_at' => now()->addDays(4)->setTime(10, 0),
@@ -126,8 +177,27 @@ class EventSeeder extends Seeder
             ],
         ];
 
-        foreach ($events as $event) {
-            Event::create($event);
+        foreach ($events as $eventData) {
+            $event = Event::create($eventData);
+
+            $attendeeCount = min(
+                rand(5, min($event->capacity, count($userIds))),
+                $event->capacity
+            );
+
+            $attendees = array_rand(array_flip($userIds), $attendeeCount);
+
+            if (! is_array($attendees)) {
+                $attendees = [$attendees];
+            }
+
+            foreach ($attendees as $userId) {
+                Rsvp::create([
+                    'user_id' => $userId,
+                    'event_id' => $event->id,
+                    'status' => 'attending',
+                ]);
+            }
         }
     }
 }
