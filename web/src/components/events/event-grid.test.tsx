@@ -13,16 +13,4 @@ describe('EventGrid', () => {
     expect(screen.getByText('Event 1')).toBeInTheDocument()
     expect(screen.getByText('Event 2')).toBeInTheDocument()
   })
-
-  it('shows loading skeleton when isLoading is true', () => {
-    const { container } = render(<EventGrid events={[]} isLoading={true} />)
-    const skeletons = container.querySelectorAll('.animate-pulse')
-    expect(skeletons.length).toBe(6)
-  })
-
-  it('renders custom skeleton count', () => {
-    const { container } = render(<EventGrid events={[]} isLoading={true} skeletonCount={3} />)
-    const skeletons = container.querySelectorAll('.animate-pulse')
-    expect(skeletons.length).toBe(3)
-  })
 })

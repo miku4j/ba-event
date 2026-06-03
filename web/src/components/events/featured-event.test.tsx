@@ -31,14 +31,8 @@ describe('FeaturedEvent', () => {
     expect(screen.getByText('RSVP')).toBeInTheDocument()
   })
 
-  it('shows loading skeleton while loading', () => {
-    const { container } = render(<FeaturedEvent featured={null} user={null} isLoading={true} />)
-    const skeleton = container.querySelector('.animate-pulse')
-    expect(skeleton).toBeInTheDocument()
-  })
-
-  it('renders nothing when no featured event and not loading', () => {
-    const { container } = render(<FeaturedEvent featured={null} user={null} isLoading={false} />)
+  it('renders nothing when no featured event', () => {
+    const { container } = render(<FeaturedEvent featured={null} user={null} />)
     expect(container.querySelector('.rounded-2xl')).not.toBeInTheDocument()
   })
 })

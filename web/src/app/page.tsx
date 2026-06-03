@@ -1,15 +1,30 @@
-"use client";
-
+import { cookies } from "next/headers";
 import { Header } from "@/components/header";
 import { FeaturedEvent } from "@/components/events/featured-event";
 import { EventGrid } from "@/components/events/event-grid";
 import { Button } from "@/components/ui/button";
-import { useEvents, useUser } from "@/lib/hooks";
 import Link from "next/link";
+import type { Event, User } from "@/types";
 
-export default function Home() {
-  const { events, isLoading } = useEvents();
-  const { data: user } = useUser();
+export default async function Home() {
+  const cookieStore = await cookies();
+  const cookie = cookieStore.toString();
+  const headers: Record<string, string> = {};
+  if (cookie) headers.cookie = cookie;
+
+  const [eventsRes, userRes] = await Promise.all([
+    fetch("http://api-nginx/api/events", {
+      headers,
+      cache: "no-store",
+    }),
+    fetch("http://api-nginx/api/user", {
+      headers,
+      cache: "no-store",
+    }).catch(() => new Response(null, { status: 401 })),
+  ]);
+
+  const events: Event[] = await eventsRes.json();
+  const user: User | null = userRes.ok ? await userRes.json() : null;
 
   const featured = events[0];
   const upcoming = events.slice(1, 7);
@@ -26,7 +41,7 @@ export default function Home() {
           </div>
 
           <div className="container mx-auto px-4 relative">
-            <FeaturedEvent featured={featured} user={user} isLoading={isLoading} />
+            <FeaturedEvent featured={featured} user={user} />
           </div>
         </section>
 
@@ -47,9 +62,9 @@ export default function Home() {
             </Link>
           </div>
 
-          <EventGrid events={upcoming} isLoading={isLoading} skeletonCount={6} />
+          <EventGrid events={upcoming} />
 
-          {!isLoading && events.length > 7 && (
+          {events.length > 7 && (
             <div className="mt-10 text-center">
               <Link href="/events">
                 <Button variant="outline" size="lg">

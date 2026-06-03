@@ -11,15 +11,10 @@ import type { Event, User } from "@/types";
 interface FeaturedEventProps {
   featured: Event;
   user: User | null;
-  isLoading?: boolean;
 }
 
-export function FeaturedEvent({ featured, user, isLoading }: FeaturedEventProps) {
+export function FeaturedEvent({ featured, user }: FeaturedEventProps) {
   const [imgError, setImgError] = useState(false);
-
-  if (isLoading) {
-    return <div className="h-72 rounded-2xl bg-zinc-200 dark:bg-zinc-800 animate-pulse" />;
-  }
 
   if (!featured) return null;
 
