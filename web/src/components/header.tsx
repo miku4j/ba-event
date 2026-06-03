@@ -2,23 +2,16 @@
 
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api";
-import { queryClient } from "@/lib/query-client";
+import { useUser, useLogout } from "@/lib/hooks";
 import Link from "next/link";
 import { useState } from "react";
 import { CircleDot, Menu, X } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
-  const { data: user, isLoading } = api.useQuery("get", "/api/user");
-  const logout = api.useMutation("post", "/api/logout");
+  const { data: user, isLoading } = useUser();
+  const { logout: handleLogout, isLoading: isLoggingOut } = useLogout();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  async function handleLogout() {
-    await logout.mutateAsync({});
-    queryClient.clear();
-    setMobileOpen(false);
-  }
 
   function navLink(href: string, label: string) {
     const active = pathname === href;
@@ -74,9 +67,10 @@ export function Header() {
                 variant="outline"
                 size="sm"
                 onClick={handleLogout}
+                disabled={isLoggingOut}
                 className="text-xs"
               >
-                Sign out
+                {isLoggingOut ? "Signing out..." : "Sign out"}
               </Button>
             </>
           ) : (
@@ -123,10 +117,11 @@ export function Header() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleLogout}
+                  onClick={() => { handleLogout(); setMobileOpen(false); }}
+                  disabled={isLoggingOut}
                   className="w-full"
                 >
-                  Sign out
+                  {isLoggingOut ? "Signing out..." : "Sign out"}
                 </Button>
               </>
             ) : (

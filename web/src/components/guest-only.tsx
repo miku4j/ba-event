@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+import { useUser } from "@/lib/hooks";
 import { useEffect } from "react";
 
 export function GuestOnly({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { data: user, isLoading } = api.useQuery("get", "/api/user");
+  const { data: user, isLoading } = useUser();
 
   useEffect(() => {
     if (!isLoading && user) {
