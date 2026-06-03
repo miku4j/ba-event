@@ -1,16 +1,18 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useUser, useLogout } from "@/lib/hooks";
 import Link from "next/link";
 import { useState } from "react";
-import { CircleDot, Menu, X } from "lucide-react";
+import { CircleDot, Menu, X, Sun, Moon } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
   const { data: user, isLoading } = useUser();
-  const { logout: handleLogout, isLoading: isLoggingOut } = useLogout();
+  const { logout: handleLogout, isLoggingOut } = useLogout();
+  const { theme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   function navLink(href: string, label: string) {
@@ -51,6 +53,13 @@ export function Header() {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
           {isLoading ? (
             <div className="h-8 w-20 rounded-full bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
           ) : user ? (
@@ -102,6 +111,14 @@ export function Header() {
             {navLink("/", "Home")}
             {navLink("/events", "Events")}
           </nav>
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 rounded-lg transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {theme === "dark" ? "Light mode" : "Dark mode"}
+          </button>
           <hr className="border-zinc-200 dark:border-zinc-800" />
           <div className="flex flex-col gap-2">
             {isLoading ? null : user ? (
