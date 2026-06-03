@@ -5,7 +5,7 @@
 - Auth: Sanctum HttpOnly cookie + Google OAuth (Socialite)
 - Frontend: shadcn/ui, Tailwind v4, React Query, openapi-fetch
 - Infra: Docker Compose, Nginx proxy, multi-stage builds, Nix shell
-- Tests: Pest (backend) + Playwright (E2E)
+- Tests: Pest (backend) + Vitest (frontend unit) + Playwright (E2E)
 
 ## Implemented Features
 - Email/password register (3/min), login (5/min), logout
@@ -13,6 +13,9 @@
 - Sanctum token auth — HttpOnly cookie → middleware bridges to Bearer header
 - OpenAPI spec auto-generated → type-safe React Query hooks on frontend
 - Nginx single-entry proxy port 8080 → /api/* to Laravel, /* to Next.js
+- **Kivotos Event Dashboard**: Listing of events from various academies (Trinity, Millennium, etc.)
+- **RSVP System**: Student participation with capacity limits and cancellation support
+- **BA-Themed UI**: Custom components using sky-blue palette and BA-specific icons
 
 ## Run
 `cp .env.example .env && docker compose up --build`
