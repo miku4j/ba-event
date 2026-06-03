@@ -1,3 +1,25 @@
+# BA Event — Full-stack Blue Archive Event Planner
+
+## Quick Facts
+- Stack: Laravel 13 (PHP 8.4) + Next.js 16 (React 19) + PostgreSQL 17 + Redis 7
+- Auth: Sanctum HttpOnly cookie + Google OAuth (Socialite)
+- Frontend: shadcn/ui, Tailwind v4, React Query, openapi-fetch
+- Infra: Docker Compose, Nginx proxy, multi-stage builds, Nix shell
+- Tests: Pest (backend) + Playwright (E2E)
+
+## Implemented Features
+- Email/password register (3/min), login (5/min), logout
+- Google OAuth redirect & callback
+- Sanctum token auth — HttpOnly cookie → middleware bridges to Bearer header
+- OpenAPI spec auto-generated → type-safe React Query hooks on frontend
+- Nginx single-entry proxy port 8080 → /api/* to Laravel, /* to Next.js
+
+## Run
+`cp .env.example .env && docker compose up --build`
+
+## Maintenance
+Keep this summary accurate. Update when features change.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
