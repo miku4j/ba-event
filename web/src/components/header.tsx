@@ -10,8 +10,8 @@ import { CircleDot, Menu, X } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
-  const { data: user, isLoading } = api.useQuery("GET", "/api/user");
-  const logout = api.useMutation("POST", "/api/logout");
+  const { data: user, isLoading } = api.useQuery("get", "/api/user");
+  const logout = api.useMutation("post", "/api/logout");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   async function handleLogout() {

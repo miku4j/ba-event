@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 export function GuestOnly({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { data: user, isLoading } = api.useQuery("GET", "/api/user");
+  const { data: user, isLoading } = api.useQuery("get", "/api/user");
 
   useEffect(() => {
     if (!isLoading && user) {

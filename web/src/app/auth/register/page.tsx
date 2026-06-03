@@ -14,7 +14,7 @@ export default function RegisterPage() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const register = api.useMutation("POST", "/api/register", {
+  const register = api.useMutation("post", "/api/register", {
     onSuccess: () => {
       router.replace("/");
     },

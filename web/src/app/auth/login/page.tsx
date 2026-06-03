@@ -12,8 +12,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const googleUrl = api.useQuery("GET", "/api/auth/google/url");
-  const login = api.useMutation("POST", "/api/login", {
+  const googleUrl = api.useQuery("get", "/api/auth/google/url");
+  const login = api.useMutation("post", "/api/login", {
     onSuccess: () => {
       router.replace("/");
     },

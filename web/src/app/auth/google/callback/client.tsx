@@ -7,7 +7,7 @@ import { api } from "@/lib/api";
 export function GoogleCallbackClient({ code }: { code: string }) {
   const router = useRouter();
 
-  const callback = api.useMutation("POST", "/api/auth/google/callback", {
+  const callback = api.useMutation("post", "/api/auth/google/callback", {
     onSuccess: () => {
       router.replace("/");
     },
