@@ -9,7 +9,7 @@
     "lint": "eslint",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "types:api": "openapi-typescript http://localhost:8080/api/openapi.json -o src/lib/api.d.ts"
+    "types:api": "openapi-typescript http://api-nginx/api/openapi.json -o src/lib/api.d.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
