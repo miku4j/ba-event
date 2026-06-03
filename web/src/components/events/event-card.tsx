@@ -39,7 +39,7 @@ export function EventCard({ event, onRSVP, isRSVPed, isLoading }: EventCardProps
   return (
     <Card className="overflow-hidden border-zinc-200 dark:border-zinc-800">
       {event.image_url && !imgError ? (
-        <div className="relative aspect-video overflow-hidden">
+        <div className="relative aspect-video overflow-hidden -mt-4">
           <Image
             src={event.image_url}
             alt={event.title}
@@ -50,7 +50,7 @@ export function EventCard({ event, onRSVP, isRSVPed, isLoading }: EventCardProps
           />
         </div>
       ) : (
-        <div className="aspect-video bg-gradient-to-br from-sky-100 to-indigo-100 dark:from-sky-950/30 dark:to-indigo-950/30" />
+        <div className="aspect-video bg-gradient-to-br from-sky-100 to-indigo-100 dark:from-sky-950/30 dark:to-indigo-950/30 -mt-4" />
       )}
       <CardHeader className="bg-zinc-50 dark:bg-zinc-900/50">
         <div className="flex items-start justify-between">
