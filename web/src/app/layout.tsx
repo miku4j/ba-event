@@ -26,13 +26,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         <script
           dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add(localStorage.getItem('theme')||'dark');`,
+            __html: `if(localStorage.getItem('theme')==='light')document.documentElement.classList.remove('dark');`,
           }}
         />
         <Providers>{children}</Providers>

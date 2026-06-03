@@ -4,15 +4,10 @@ import { Header } from './header'
 
 const mockUseUser = vi.fn()
 const mockLogout = vi.fn()
-const mockSetTheme = vi.fn()
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn(), prefetch: vi.fn() }),
   usePathname: () => '/',
-}))
-
-vi.mock('next-themes', () => ({
-  useTheme: () => ({ theme: 'dark', setTheme: mockSetTheme }),
 }))
 
 vi.mock('@/lib/hooks', () => ({
@@ -64,10 +59,14 @@ describe('Header', () => {
     expect(screen.getByLabelText('Toggle theme')).toBeInTheDocument()
   })
 
-  it('calls setTheme when toggle is clicked', () => {
+  it('toggles dark class on html when theme is clicked', () => {
     mockUseUser.mockReturnValue({ data: null, isLoading: false })
+    document.documentElement.classList.add('dark')
     render(<Header />)
-    fireEvent.click(screen.getByLabelText('Toggle theme'))
-    expect(mockSetTheme).toHaveBeenCalledWith('light')
+    const btn = screen.getByLabelText('Toggle theme')
+    fireEvent.click(btn)
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+    fireEvent.click(btn)
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
   })
 })

@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useUser, useLogout } from "@/lib/hooks";
 import Link from "next/link";
@@ -12,8 +11,15 @@ export function Header() {
   const pathname = usePathname();
   const { data: user, isLoading } = useUser();
   const { logout: handleLogout, isLoggingOut } = useLogout();
-  const { theme, setTheme } = useTheme();
+  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  function toggleTheme() {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  }
 
   function navLink(href: string, label: string) {
     const active = pathname === href;
@@ -54,11 +60,11 @@ export function Header() {
 
         <div className="hidden md:flex items-center gap-3">
           <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={toggleTheme}
             className="p-2 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            {dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
           {isLoading ? (
             <div className="h-8 w-20 rounded-full bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
@@ -112,12 +118,12 @@ export function Header() {
             {navLink("/events", "Events")}
           </nav>
           <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() => { toggleTheme(); }}
             className="flex items-center gap-2 w-full px-3 py-2 text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 rounded-lg transition-colors"
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            {theme === "dark" ? "Light mode" : "Dark mode"}
+            {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {dark ? "Light mode" : "Dark mode"}
           </button>
           <hr className="border-zinc-200 dark:border-zinc-800" />
           <div className="flex flex-col gap-2">
