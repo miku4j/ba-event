@@ -43,7 +43,7 @@ export function EventCard({ event, onRSVP, isRSVPed, isLoading }: EventCardProps
           <MapPin className="h-4 w-4" /> {event.location}
         </CardDescription>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="flex-1 pt-4">
         <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-3">
           {event.description}
         </p>
